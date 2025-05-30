@@ -8,6 +8,7 @@ Quantum annealing is an adiabatic quantum computing technique that has the poten
 
 |Folder|Description|
 |---|---|
+|`arXiv`|Reformatted report for submission to <https://arxiv.org/>|
 |`Code`|Python files and Jupyter notebooks used to create the framework|
 |`Data`|Solutions returned from both quantum and classical solvers|
 |`Examples`|Graphic and audio files of original scores and arrangements|
