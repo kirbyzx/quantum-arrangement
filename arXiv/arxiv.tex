@@ -1,6 +1,11 @@
 \documentclass[twocolumn]{article}
 
-\usepackage[a4paper,margin=1.5cm]{geometry} 
+\usepackage[a4paper,margin=1cm,includeheadfoot]{geometry}
+\usepackage{times}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead[R]{Quantum annealing for music arrangement}
+\fancyhead[L]{Lucas Kirby}
 
 \usepackage[utf8]{inputenc}
 \DeclareUnicodeCharacter{2212}{$-$} % Minus sign
@@ -15,8 +20,7 @@
 \usepackage[labelformat=parens, labelfont=bf, subrefformat=parens]{subcaption}
 
 % Spacing
-\usepackage{parskip}
-\usepackage{setspace}
+%\usepackage{setspace}
 \usepackage{microtype}
 
 % Graphics
@@ -47,7 +51,7 @@
 
 % Bibliography
 \usepackage[style=trad-abbrv, maxnames=3, date=year, backend=biber, sorting=none]{biblatex}
-\addbibresource{thesis.bib}
+\addbibresource{arxiv.bib}
 
 \usepackage{xurl}
 \usepackage{chngcntr}
@@ -61,12 +65,15 @@
 
 \begin{document}
 
+\thispagestyle{plain}
 \twocolumn[
     {\Huge\bfseries Quantum annealing for music arrangement}
 
     \bigskip
 
     {\Large Lucas Kirby}
+
+    arxiv@lucaskirby.co.uk
 
     \begin{abstract}              
     
@@ -75,11 +82,13 @@
     \end{abstract}
 
     \bigskip
+    \bigskip
+
 ]
 
 %\includesvg{durham-university.svg}
 
-\section{Introduction}
+\section*{Introduction}
 
 % Background to quantum computing
 The field of quantum computing has its foundations as early as the 1980s, with the suggestion that hardware following the laws of quantum mechanics could be faster and more powerful than its classical counterpart \cite{feynman_simulating_1982}.
@@ -102,7 +111,7 @@ Since its emergence into the computer music scene, quantum computers have been u
 In this study, we propose that music arrangement can be formulated as an optimisation problem to be solved using a heuristic application of adiabatic quantum computing called quantum annealing.
 The structure of the study is as follows: we first introduce the relevant theory for both quantum annealing as a computational tool, and music arrangement as a suitable problem to solve; we then propose an original framework for combining the two, and apply this method to two musical scores; finally, we consider conclusions and possible future work.
 
-\section{Quantum annealing}
+\section*{Quantum annealing}
 
 As mentioned, quantum annealing falls under the category of adiabatic quantum computing (AQC). AQC is a computing technique that relies on the adiabatic theorem \cite{born_beweis_1928}.
 
@@ -152,7 +161,7 @@ to be minimised, where $x_i\in\{0,1\}$ is a new vector of binary variables, and 
 
 Whilst there are merits for each model, this study exclusively uses QUBO models to express optimisation problems.
 
-\subsection{Quantum hardware}
+\subsection*{Quantum hardware}
 
 Once a problem has been expressed with an Ising or QUBO model, it is sent to a quantum processing unit (QPU) to be solved. These units take the form of a physical Ising spin glass: a lattice of dipoles connected via couplers. The qubit biases and coupling values are influenced by electromagnetic fields, allowing the mapping of a model's \emph{logical} qubits to a QPU's \emph{physical} qubits, with linear terms as dipoles and quadratic terms as couplers between them. This mapping process is known as minor embedding, and is often handled by a classical computer ``on the fly'' each time a problem is submitted \cite{dwave_embedding}, introducing a slight computational overhead to running a problem. Fixed embeddings can be specified, but these require a priori knowledge of the specific QPU architecture. Once embedded, the system can be prepared in its initial ground state, and allowed to evolve to its final state to obtain a solution that aims to minimise the problem model.
 
@@ -176,7 +185,7 @@ Interaction with D-Wave QPUs is handled through their Leap quantum cloud service
 
 Quantum annealing has already been applied to a wide array of optimisation problems: this study explores a novel creative application of this computing technique---music arrangement.
 
-\section{Music arrangement}
+\section*{Music arrangement}
 \label{sec:arrangement}
 
 Music has become a hallmark of the human experience---so much so that the \textit{Voyager 1} probe carries 90 minutes of music from across the world as a message to potential extraterrestrial life \cite{nasa_golden_2024}. Whilst some musicians compose entirely new music, others adapt previously-written pieces for practical or artistic reasons, whether that be in terms of instrumentation, medium, or style. This is \emph{arrangement}.
@@ -207,11 +216,11 @@ The beginning of any arrangement process is an original musical score. There exi
 Whilst the automation of music might seem irreverent to some, the application of each new technology, from the printing press to the computer, heralds a new way to preserve the continuation of tradition. The next section outlines an original framework by which to arrange music in a quantum manner.
 
 % Theory, anyone could apply these steps. Then talk about practicalities in results (or in code appendix)
-\section{Proposed framework}
+\section*{Proposed framework}
 
 Previous approaches to the automatic arrangement of music have relied on classical algorithms in order to produce arrangements that are musically sound. However, these methods are limited by the complexity of the problem and the need for extensive training data. In this study, we propose a new framework for the arrangement of music via quantum annealing, an application which has not been studied before at time of writing. A toy example of the proposed method can be seen in \cref{fig:toy}.
 
-\begin{figure}[!ht]
+\begin{figure*}[!ht]
     \centering\footnotesize
     \begin{subfigure}{\textwidth}
         \centering
@@ -236,13 +245,13 @@ Previous approaches to the automatic arrangement of music have relied on classic
 
     \caption{Toy example demonstrating a simplified version of the proposed framework. \textbf{\subref{fig:toy-score}} Example score of three parts. Phrases identified by the LBDM have been coloured and outlined. \textbf{\subref{fig:toy-graph}} Graph of the score, with the colour and label of each vertex corresponding to its phrase, and edges connecting overlapping phrases. One possible solution of proper vertex colouring, with $n=1$, is shown by the outlined vertices. \textbf{\subref{fig:toy-arrangement}} Score representation of the final arrangement.}
     \label{fig:toy}
-\end{figure}
+\end{figure*}
 
-\subsection{Score preprocessing}
+\subsection*{Score preprocessing}
 
-Before reduction can begin, a musical score must undergo preprocessing to ensure the produced arrangement will fulfil the conditions outlined in \cref{sec:arrangement}. In particular, \cref{con:monophonic} demands that all music must be strictly monophonic. The score is broken down into its constituent parts, bars, and notes---each note is represented by a vector of features, such as pitch and duration, as well as its position within the wider piece, which can be measured as an offset (the number of beats from the start of the score). Some instruments (e.g.\ strings) are capable of playing multiple notes at a time (chords), whereas others (e.g.\ woodwind) physically cannot. Additionally, composers will often write several voice parts for orchestral sections, which can be played by individuals within the section simultaneously. Both the cases of chords and voices break this condition, and so without knowing how phrases will be assigned, all music must therefore be reduced to monophony to ensure universal playability. We remove all but a single note (in this case the one highest in pitch) from chords and multi-part voicings within the score before moving onto the next stage.
+Before reduction can begin, a musical score must undergo preprocessing to ensure the produced arrangement will fulfil the conditions outlined previously. In particular, \cref{con:monophonic} demands that all music must be strictly monophonic. The score is broken down into its constituent parts, bars, and notes---each note is represented by a vector of features, such as pitch and duration, as well as its position within the wider piece, which can be measured as an offset (the number of beats from the start of the score). Some instruments (e.g.\ strings) are capable of playing multiple notes at a time (chords), whereas others (e.g.\ woodwind) physically cannot. Additionally, composers will often write several voice parts for orchestral sections, which can be played by individuals within the section simultaneously. Both the cases of chords and voices break this condition, and so without knowing how phrases will be assigned, all music must therefore be reduced to monophony to ensure universal playability. We remove all but a single note (in this case the one highest in pitch) from chords and multi-part voicings within the score before moving onto the next stage.
 
-\subsection{Phrase identification}
+\subsection*{Phrase identification}
 
 First, the music needs to be quantised. This could very easily be done by using predefined elements such as bars or notes, but these units on their own lack any intrinsic musical meaning. Similar to how a sentence might be split up into lexical phrases, instead of individual words or syllables, a line of music can be segmented into musical phrases, each representing a contained melodic or rhythmic idea. By preserving these smallest units of melodic lines and harmonies, we maintain the essence and familiarity of the original score, which is one of the core features of a good arrangement.
 
@@ -266,7 +275,7 @@ Finally, to find the total boundary strength, the strengths of each parameter ar
 
 This model is run on each instrument part in a score; once a list of boundaries is created, the phrases can be defined by taking all notes between successive boundaries. Each phrase is labelled according to the part it belongs to and its phrase index within that part, allowing the phrases to be easily referenced and reconstructed into a new score once the optimisation is complete. An example of the output of the LBDM can be seen in \cref{fig:toy-score}.
 
-\subsection{Problem formulation}
+\subsection*{Problem formulation}
 
 How can the arrangement of these phrases, in fulfilment of the conditions outlined previously, be expressed as an optimisation problem that can be solved via quantum annealing? There are many pre-existing NP problems that can be solved in this way, including Boolean satisfiability and set packing \cite{lucas_ising_2014}. Here we show that the music arrangement problem can be reduced to a graph theory problem known as \emph{proper vertex colouring}.
 
@@ -293,7 +302,7 @@ for a set of $n$ colours, then the QUBO model for proper vertex colouring can be
 \end{equation}
 where $A,B$ are Lagrange parameters, and we have introduced the slack variables $s_v\in\{0,1\}$.\footnote{This reduces to the maximum independent set problem when $n=1$.} The first term implements the single-colour constraint (or vertex constraint) by increasing the energy by $A$ each time a vertex is coloured more than once ($\sum_{i=1}^{n} x_{v,i}>1$). The nature of a reduction implies that not all phrases will be played, so the inclusion of the slack variables (specifically when $s_v=0$) allows a vertex not to be coloured at all. Similarly, the second term implements the colour-adjacency constraint (or edge constraint) by increasing the energy by $B$ for each pair of identically-coloured vertices connected by an edge (i.e.\ $\sum_{i=1}^n x_{u,i}x_{v,i}=1$). When this function is minimised (strictly zero, in this case), the proper vertex colouring problem is solved and all the conditions are met for a valid arrangement. The $x_{v,i}$ can then be read off from the solution and cross-referenced with their corresponding phrases to give the final score, an example of which can be seen in \cref{fig:toy-arrangement}.
 
-\subsection{Musical entropy}
+\subsection*{Musical entropy}
 
 Despite having a valid arrangement of phrases, this does not guarantee that the music produced will have any sense of ``musicality''. To ensure the arrangement is as musically interesting as possible, each vertex of the graph can be weighted to introduce a bias according to its phrase's ``musicality''. The idea of a musical ``utility'' has been used before with classical reduction algorithms \cite{huang_towards_2012} and to assess playability rules \cite{chiu_automatic_2009}. Here we quantify this by calculating a phrase's \emph{musical entropy}.
 
@@ -335,12 +344,13 @@ Taking these functions together, the final QUBO model is
 \begin{align}
     f(x)&=f_{A,B}+f_C+f_D+f_E \notag\\
     &=A\sum_{v \in V}\left(s_v-\sum_{i=1}^{n} x_{v,i}\right)^2+B\sum_{(uv) \in E}\sum_{i=1}^n x_{u,i}x_{v,i} \notag\\
-    &-C\sum_{v \in V}\sum_{i=1}^n W_{v,v}x_{v,i}-D\sum_{(uv)\in E}W_{uv}\sum_{i=1}^n\sum_{i<j}^n x_{u,i}x_{v,j}-E\sum_{v \in V}\sum_{i=1}^n\theta(W_{vv}-W_{\text{th},i})x_{v,i}
+    &-C\sum_{v \in V}\sum_{i=1}^n W_{v,v}x_{v,i}-D\sum_{(uv)\in E}W_{uv}\sum_{i=1}^n\sum_{i<j}^n x_{u,i}x_{v,j}\notag\\
+    &-E\sum_{v \in V}\sum_{i=1}^n\theta(W_{vv}-W_{\text{th},i})x_{v,i}
     \label{eq:problem-qubo}
 \end{align}
 which requires $N(n+1)$ variables, where $N$ is the total number of phrases.
 
-\subsection{Lagrange parameter analysis}
+\subsection*{Lagrange parameter analysis}
 
 To ensure that the minimisation of \cref{eq:problem-qubo} does indeed fulfil the conditions necessary for a valid arrangement, the Lagrange parameters must be tuned. The very nature of the problem means a full parametric analysis would be complicated, so this study focuses on an empirical approach.
 Nonetheless, a quick algebraic calculation can help obtain estimates. The model given by \cref{eq:problem-qubo} contains two constraints, each of which aims to fulfil a different condition. The vertex constraint (labelled with $A$) upholds \cref{con:non-degenerate}, the breaking of which would introduce phrases being duplicated in the final arrangement. The edge constraint (labelled with $B$) upholds \cref{con:monophonic}, preventing phrases that overlap being played by the same part. The number of duplicates and overlaps needs to be strictly zero in order for a solution to be valid, therefore these Lagrange parameters need to be large enough to facilitate this.
@@ -357,61 +367,61 @@ To allow a similar analysis across problems with different weight matrices, we s
 
 Throughout this study we set $E_m=1$ so that the bias towards part roles is present but subtle. The values of $A_m$ and $B_m$ can then be found by performing parametric variation and measuring the number of broken constraints (duplicates and overlaps) in the lowest-energy solutions. Penalty parameter values should be just large enough to not break any constraints, whilst not being too large as to overwhelm the objective terms in the QUBO equation \cite{au-yeung_np-hard_2023}.
 
-\subsection{Solution interpretation}
+\subsection*{Solution interpretation}
 
 Once the problem has been submitted to a quantum annealer and a distribution of solutions returned, we can finally construct the arrangement. Out of all the samples, the lowest-energy valid (i.e.\ no duplicates or overlaps) sample is picked, corresponding to the most optimal solution. The binary variables assigning vertices to colours can be read off and interpreted as phrases and instruments, respectively, allowing the music of the original score to be transformed into the final arrangement.
 At this point, music post-processing can also be applied. In this study, phrases are shifted up or down octaves depending on the pitch range of the target instrument, to ensure playability. An example of an arranged score can be seen in \cref{fig:toy-arrangement}.
 
-\section{Results}
+\section*{Results}
 
 The outlined framework was applied to two scores: Quartet No.\ 1 in B-flat major, Op.\ 1, by Joseph Haydn (hereon referred to as Haydn Op.\ 1), and Symphony No.\ 5 in C minor, Op.\ 67, I.\ Allegro con brio, by Ludwig van Beethoven (referred to as Beethoven Op.\ 67). Haydn Op.\ 1 is of a Baroque style, consisting of 63 bars with four instrument parts that play consistently throughout the piece, structured into short, well-defined phrases. This score was chosen as it was expected that the LBDM would be reasonably successful in discretising the piece, and that its short length and smaller instrumentation would result in a manageable number of variables to be embedded into the QPU. Beethoven Op.\ 67 is of a Classical style and was shortened to the first 21 bars, with 12 instrument parts that are introduced at different times in the piece. This score was chosen for limit-testing purposes, as its larger instrumentation greatly increases the connectivity of the problem and the size of the embedding. Furthermore, both pieces are relatively well-known, meaning their constructed arrangements could be criticised more readily by ear.
 
-\begin{figure}[!b]
+\begin{figure*}[ht]
     \centering\footnotesize
     \includesvg[width=\textwidth]{haydn-lbdm.svg}
     \caption{Calculated boundary strengths for the Violin I part of Haydn Op.\ 1. The threshold of \num{0.3} is denoted by the dotted line, resulting in \num{51} identified boundaries.}
     \label{fig:phrase-extraction}
-\end{figure}
+\end{figure*}
 
 An example of the output of the LBDM can be seen in \cref{fig:phrase-extraction}, here applied to the {Violin I} part of Haydn Op.\ 1, with a threshold of \num{0.3}. Thresholds were chosen manually by examining the distribution of boundary strengths, and keeping in mind the size limitations of embeddings. Notes with boundary strengths above the chosen threshold were taken as boundaries, defining the phrases that would become the vertices of the problem graph. Overall this resulted in \num{192} identified phrases for Haydn Op.\ 1, and \num{127} phrases for Beethoven Op.\ 67 (using a threshold of \num{0.25}). The entropy of each phrase was calculated using \cref{eq:entropy}, to be used as the corresponding vertex weight and to calculate the edge weights, and the QUBO model was then constructed using \cref{eq:problem-qubo}.
 
-\begin{figure}[!t]
+\begin{figure*}[ht]
     \centering\footnotesize
     \includesvg[width=\textwidth]{embedding.svg}
     \caption{Number of qubits required for problems of different instruments, with the dotted line marking the maximum number of accessible qubits in a D-Wave QPU (\num{5640}). Logical qubits (equivalent to the number of variables) shown as solid lines, physical qubits required to embed the problem shown as points with a dashed line quadratic fit. Shaded region represents a theoretical extrapolation to arrangement for a higher number of instruments.}
     \label{fig:qubits}
-\end{figure}
+\end{figure*}
 
 Once the QUBO models had been created, they were embedded into the QPU architecture. The scaling of the number of qubits required with the number of arrangement instruments for both pieces can be seen in \cref{fig:qubits}. It is important again to differentiate between \emph{logical} qubits, which are the variables that define the problem, and \emph{physical} qubits, which exist in the QPU itself onto which the problem is embedded. The number of logical qubits required is well-defined as $N(n+1)$ where $N$ is the number of phrases and $n$ the number of instruments, and so increases linearly with $n$ (except for $n=1$ in which case only $N$ qubits are required since slack variables are not needed). In contrast, the number of physical qubits increases more quickly, shown here with a quadratic fit. We are reminded that the maximum degree of a qubit in a D-Wave QPU is \num{15}, that is, each qubit can only connect with \num{15} other qubits; any more than this and we require qubits to be chained. The difference between physical and logical qubits can be seen as the number of extra qubits required in chains to provide the desired connectivity. Beethoven Op.\ 67 shows this difference significantly: despite requiring fewer logical qubits than Haydn Op.\ 1 (owing to its smaller number of phrases), the number of physical qubits required is consistently higher. The original score contains over twice the instrument parts, meaning its phrases have more overlaps needing a greater degree of connectivity from its variables. Due to this rapid increase in physical qubits, Beethoven Op.\ 67 models could not be embedded onto the QPU for $n>4$, although the projected number of qubits required has been shown on the plot. Haydn Op.\ 1 embeddings were comfortably below the qubit limit (shown by the dotted line) up to the piece maximum of $n=4$. Subsequently, Haydn Op.\ 1 was chosen to be arranged for up to four instruments, but instead as a traditional woodwind quartet (Flute, Oboe, Clarinet, Bassoon). Beethoven Op.\ 67 was also chosen to be arranged for up to four instruments, but now as a string quartet (Violin I, Violin II, Viola, Violoncello). Full details can be found in \cref{app:examples}. Once these embeddings were calculated, the problems could be sent to the QPU for solving.
 
 An example of the energy distribution of a returned sample set can be seen in \cref{fig:histograms}, using Haydn Op.\ 1 with $n=3$. All energies presented in this study have arbitrary units, and the absolute values simply reflect the size of the problem---what is important is the difference in energy between solutions. As the number of reads tends to infinity, this distribution should reflect the true distribution of the energy eigenvalues of the optimisation problem, and at \num{2000} reads already seems to be well-sampled.\footnote{For this particular problem there are $2^{768}\sim 10^{231}$ levels. To put that into perspective, the Universe is said to contain about $10^{24}$ stars.} The most optimal solutions lie in the leftmost tail of the distribution, corresponding to the lowest energies. The distribution is very symmetric, meaning the probability of returning these low-energies is not favourable, but not impossible.
 The spectral gap distribution can also be seen, which measures the difference in energy between adjacent eigenstates. It takes the form of an exponential decay, with many samples having very small ($<0.1$) energy gaps, implying that many of the energy eigenstates are degenerate. According to \cref{eq:energy-gap}, depending on the location of these small energy gaps, this could mean that longer evolution times are required to remain in a low-energy state and find optimal solutions.
 
-\begin{figure}[t]
+\begin{figure*}[t]
     \centering\footnotesize
     \includesvg[width=\textwidth]{haydn-histograms.svg}
     \caption{Example of a returned sample set of \num{2000} reads from solving the Haydn Op.\ 1 problem with $n=3$. \textbf{(Left)} Histogram of sample energies. \textbf{(Right)} Histogram of gaps in the energy spectrum (gaps greater than \num{1.0} not shown).}
     \label{fig:histograms}
-\end{figure}
+\end{figure*}
 
-\subsection{Parameter tuning}
+\subsection*{Parameter tuning}
 
 Next, the Lagrange parameters $A_m$ and $B_m$ were tuned, the results of which can be seen in \cref{fig:lagrange}. These two parameters were varied together as the large number of variables in the QUBO model makes it hard to predict how the terms interact.
 The number of broken constraints was taken as the sum of overlaps and duplicates combined. In terms of reducing this number, the edge multiplier ($B_m$) can be seen to have the most importance, although an increase in the vertex multiplier ($A_m$) is still required to reduce this number to exactly zero in order to produce a valid solution. The parameters used for subsequent models were $A_m=6,B_m=6$ for Haydn Op.\ 1 and $A_m=6,B_m=12$ for Beethoven Op.\ 67, which can be seen to fulfil \cref{eq:lagrange} as expected. The higher edge multiplier required for Beethoven Op.\ 67 can be seen as an effect of its increased connectivity; the original score has over twice the number of instrument parts, increasing both the number of edges in the problem graph and the number of constraints that could possibly be broken. The tuning of these parameters does not necessarily guarantee that no constraints are broken in the lowest-energy solutions, however, it will be more likely.
 
-\begin{figure}[p]
+\begin{figure*}[p]
     \centering\footnotesize
     \includesvg[width=\linewidth]{lagrange-parameters.svg}
     \caption{Parametric plots tuning the Lagrange parameters $A_m$ (vertex multiplier) and $B_m$ (edge multiplier). Each data point sampled three times at \num{500} reads, with the mean number of broken constraints in the lowest-energy solution taken. Chosen values marked with a cross. \textbf{(Left)} Haydn Op.\ 1 parameters varied up to a maximum of \num{8} with $n=3$. $A_m=6,B_m=6$ chosen. \textbf{(Right)} Beethoven Op.\ 67 parameters varied up to a maximum of \num{12} with $n=4$. $A_m=6,B_m=12$ chosen.}
     \label{fig:lagrange}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[p]
+\begin{figure*}[p]
     \centering\footnotesize
     \includesvg[width=\textwidth]{solver-config.svg}
     \caption{Optimisation of the solver configuration. Each data point sampled three times at \num{1000} reads, with the mean and standard error calculated. Same $n$ as \cref{fig:lagrange}. \textbf{(Top)} Variation of the fraction of chains broken (red triangles) and energy (blue circles) of the lowest-energy samples with chain strength, using the default anneal time (\qty{20}{\us}).  \textbf{(Bottom)} Variation of lowest energy with anneal time per sample, using the updated chain strength.}
     \label{fig:solver-configuration}
-\end{figure}
+\end{figure*}
 
 Optimisation of both the chain strength and anneal time per sample solver properties can be seen in \cref{fig:solver-configuration}. For both scores, increasing the chain strength leads to a direct decrease in the fraction of chains broken. However, the chain break fraction does not necessarily need to be exactly zero for valid solutions to be returned. Chain breaks increase the likelihood of broken constraints, as they are resolved after the evolution process and may not reflect a minimisation of the QUBO problem, but as long as the fraction is small then there is still a good chance the lowest-energy solutions can still be valid. Both scores also demonstrate a minimum point in the lowest energies of the returned sample sets. Before this point, the chain strength is too weak to enforce the homogeneity of the chain, leading to more chain breaks and increased energy from their resolution. After this point, the chain strength overwhelms other terms in the QUBO model, resulting in a priority to maintain chains, at the detriment of the minimisation of objective terms.
 
@@ -419,23 +429,23 @@ In order to choose a suitable chain strength, a compromise has to be made betwee
 
 Anneal time per sample could only be increased to a maximum of \qty{300}{\us} for a problem submission of \num{1000} reads due to time limits imposed by the solver. In theory, as $t\to\infty$, the energy of the samples should tend to some minimum ground state energy due to the adiabatic theorem; here, we do observe a general decreasing trend, but not one that is particularly steady, especially for Beethoven Op.\ 67. It may be that the solutions found are already close to the true minimisation of the QUBO problem (but unlikely at such short time scales), or that there is some local minimum due to small spectral gaps that requires a longer anneal time to resolve, as in \cref{eq:energy-gap}. In the interest of time and the desire to increase the number of reads, an anneal time per sample of \qty{200}{\us} was chosen for both Haydn Op.\ 1 and Beethoven Op.\ 67.
 
-\subsection{Comparison to classical algorithms}
+\subsection*{Comparison to classical algorithms}
 
 Having tuned the Lagrange parameters and solver configuration, we compare returned solutions from the QPU to classical optimisation algorithms solving the same problem. D-Wave provides a selection of heuristic classical samplers that can return solutions to QUBO problems, two of which are used in this study.
 
-\begin{figure}[p]
+\begin{figure*}[p]
     \centering\footnotesize
     \includesvg[width=\textwidth]{compare-reads.svg}
     \caption{Comparison between quantum annealing (QA), steepest descent (SD), and simulated annealing (SA) sample set energies with $n=3$, varying the number of reads. Each data point sampled five times, with the mean and standard error calculated. Best-fit lines found via a least-squares regression.}
     \label{fig:reads}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[p]
+\begin{figure*}[p]
     \centering\footnotesize
     \includesvg[width=\textwidth]{compare-entropy.svg}
     \caption{Comparison between quantum annealing (QA), steepest descent (SD), and simulated annealing (SA) entropies of the same lowest-energy samples as \cref{fig:reads}. Best-fit lines found via a least-squares regression.}
     \label{fig:entropy}
-\end{figure}
+\end{figure*}
 
 The steepest descent method, the discrete analogue of gradient descent, takes steps according to a local minimisation---the dimension along which to descend is determined by the variable flip that causes the greatest reduction in energy \cite{dwave_samplers}. The initial state of the solver is randomised for each sample so, although it is guaranteed to find a local minimum with enough steps, for a complex problem with many such minima the same solution will not necessarily be returned. Despite its apparent rudimentary nature, this method is still widely used for solving optimisation problems due to its speed and efficiency.
 
@@ -447,14 +457,14 @@ On the other hand, quantum annealing performs poorly at providing low-energy sol
 
 A similar comparison can be seen in \cref{fig:entropy}, but this time comparing the other model objective, musical entropy. We note that, unlike sample energy, the model aims to maximise this value. Both pieces again display very little variation in entropy with the number of reads. Similar to the comparison in energy, quantum annealing performs better than the classical algorithms in optimising the Haydn Op.\ 1 problem, consistently providing higher-entropy solutions, whilst performing consistently worse for Beethoven Op.\ 67. This is perhaps unsurprising, as energy and entropy are intrinsically linked in the QUBO model, with a minimisation in energy likely leading to a maximisation of entropy. However, the entropy value does give more information about the perceived ``quality'' of the solution, such as how effectively phrases have been assigned according to instrument roles. In the case of Haydn Op.\ 1, whilst quantum and simulated annealing perform similarly in energy, we would expect the arrangement produced by quantum annealing to be more musical.
 
-\subsection{Scaling}
+\subsection*{Scaling}
 
-\begin{figure}[!b]
+\begin{figure*}[ht]
     \centering\footnotesize
     \includesvg[width=\textwidth]{scaling.svg}
     \caption{Comparing solutions returned by steepest descent (red squares) and simulated annealing (green triangles) against quantum annealing. Each data point sampled five times at \num{2000} reads, with the mean and standard error calculated. Difference from quantum annealing shown, with a positive difference signifying an advantage towards quantum annealing. \textbf{(Top)} Lowest-energy samples of the returned sample set. \textbf{(Bottom)} Time to solution, in seconds.}
     \label{fig:scaling}
-\end{figure}
+\end{figure*}
 
 A comparison to classical algorithms can also be made as the problem size changes---in this case varying the number of arrangement instruments $n$. Increasing $n$ not only increases the number of equation variables, but also the degree of those variables, raising the connectivity of the problem. Variation of both lowest energy and time to solution with the number of instruments can be seen in \cref{fig:scaling}. Focusing on the sample energies, all solvers perform similarly for both pieces when $n=1$ (the smallest problem). This similarity ends, however, as $n$ increases. For the problems posed by Haydn Op.\ 1, quantum annealing performs better than both classical algorithms until $n=4$, at which point the difference is substantial. This point can be seen as the connectivity limit at which the problems become too complicated to embed efficiently onto the QPU, with long chains resulting in an increased probability of broken chains that raise the energy. Beethoven Op.\ 67 models can be seen to already be at this limit when $n>1$, with the performance of both classical algorithms only getting better compared to quantum annealing as $n$ increases.
 
@@ -463,7 +473,7 @@ When measuring time to solution, only the annealing time is considered for quant
 Throughout this testing, low-energy valid solutions were sampled and converted into musical scores, which could also be used to generate audio files. As with all of the arts, subjective judgement is difficult, but we note that the generated arrangements were not unpleasant to the ear.
 An overview of the code used throughout this section can be found in \cref{app:code}, and original scores, with their arrangement counterparts, can be found in \cref{app:examples}.
 
-\section{Conclusions}
+\section*{Conclusions}
 
 Holistically, it can be said that the formulation and application of the proposed framework is a success. Music arrangement is readily identified and constructed as an original problem to be solved via quantum annealing, which is then run on real quantum annealers to return solutions that provide valid arrangements. For both pieces trialled in this study, the QPU was able to give optimised solutions for a range of arrangement instruments (albeit some more successful than others), and, in the case of Haydn Op.\ 1, outperform two common classical algorithms in terms of solution energy and time to solution for some problem sizes.
 
@@ -520,15 +530,18 @@ The full repository of code used in this study can be found at
 
 The following are excerpts of the original scores used for testing this framework, alongside their associated arrangement instruments, problem graphs, and arrangement scores. All original files provided in the public domain. Audio examples can be found in the code repository.
 
+\newlength{\scorewidth}
+\setlength{\scorewidth}{.88\textwidth}
+
 \begin{figure}[ht]
-    \centering
     \begin{subfigure}{\textwidth}
-        \includegraphics[width=\textwidth,page=1]{haydn-op1.pdf}
+        \centering
+        \includegraphics[width=\scorewidth,page=1]{haydn-op1.pdf}
         \caption{Original score, bars 1--16.}
     \end{subfigure}
 \end{figure}
 \begin{figure}[ht]
-    \ContinuedFloat\centering
+    \ContinuedFloat
     \begin{subfigure}{\textwidth}
         \centering\setlength{\tabcolsep}{12pt}
         \begin{tabular}{lllr}
@@ -544,28 +557,30 @@ The following are excerpts of the original scores used for testing this framewor
         \caption{Arrangement instruments and their assigned roles.}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
+        \centering
         \includesvg[width=\textwidth]{haydn-graph.svg}
         \caption{Proper vertex colouring with $n=3$, lowest-energy valid solution coloured.}
     \end{subfigure}
 \end{figure}
 \begin{figure}[ht]
-    \ContinuedFloat\centering
+    \ContinuedFloat
     \begin{subfigure}{\textwidth}
-        \includegraphics[width=\textwidth,page=1]{haydn-arr.pdf}
+        \centering
+        \includegraphics[width=\scorewidth,page=1]{haydn-arr.pdf}
         \caption{Constructed arrangement from solution, bars 1--21. Note that, due to the nature of the reconstruction, the music may be poorly formatted and incomplete.}
     \end{subfigure}
     \caption{Quartet No.\ 1 in B-flat major, Op.\ 1, by Joseph Haydn.}
 \end{figure}
 
 \begin{figure}[ht]
-    \centering
     \begin{subfigure}{\textwidth}
-        \includegraphics[width=\textwidth,page=1]{beethoven-op67.pdf}
+        \centering
+        \includegraphics[width=\scorewidth,page=1]{beethoven-op67.pdf}
         \caption{Original score, bars 1--8.}
     \end{subfigure}
 \end{figure}
 \begin{figure}[ht]
-    \ContinuedFloat\centering
+    \ContinuedFloat
     \begin{subfigure}{\textwidth}
         \centering\setlength{\tabcolsep}{12pt}
         \begin{tabular}{lllr}
@@ -581,14 +596,16 @@ The following are excerpts of the original scores used for testing this framewor
         \caption{Arrangement instruments and their assigned roles.}
     \end{subfigure}
     \begin{subfigure}{\textwidth}
+        \centering
         \includesvg[width=\textwidth]{beethoven-graph.svg}
         \caption{Proper vertex colouring with $n=4$, lowest-energy valid solution coloured.}
     \end{subfigure}
 \end{figure}
 \begin{figure}[ht]
-    \ContinuedFloat\centering
+    \ContinuedFloat
     \begin{subfigure}{\textwidth}
-        \includegraphics[width=\textwidth,page=1]{beethoven-arr.pdf}
+        \centering
+        \includegraphics[width=\scorewidth,page=1]{beethoven-arr.pdf}
         \caption{Constructed arrangement from solution, bars 1--21. Note that, due to the nature of the reconstruction, the music may be poorly formatted and incomplete.}
     \end{subfigure}
     \caption{Symphony No.\ 5 in C minor, Op.\ 67, by Ludwig van Beethoven.}
